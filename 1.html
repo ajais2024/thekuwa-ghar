@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aap Ka Ghar — Thekuwa Ghar</title>
+  <style>
+    /* ==========================================================================
+       1. GLOBAL STYLES & THEME
+       ========================================================================== */
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #1b1b1b;
+      background: #fffdf8;
+      line-height: 1.6;
+    }
+    .hidden { display: none !important; }
+    .card {
+      background: #fffaf0;
+      border: 1px solid #e9e1d6;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 1px 0 rgba(0,0,0,.04);
+    }
+    .muted { color: #6b6b6b; }
+    .list { padding-left: 20px; margin: 0; }
+    
+    /* Buttons */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+    }
+    .btn.primary { background: #b85c38; color: white; }
+    .btn.secondary { background: #e9e1d6; color: #1b1b1b; }
+    .place-order-btn {
+      width: 100%;
+      padding: 12px;
+      background: #b85c38;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .place-order-btn:hover { background: #9c492a; }
+
+    /* Forms global setup */
+    label { font-weight: 600; font-size: 14px; display: block; margin-bottom: 5px; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #e9e1d6;
+      background: #fff;
+      font: inherit;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+
+    /* ==========================================================================
+       2. AUTHENTICATION PAGES (REGISTER & LOGIN CORES)
+       ========================================================================== */
+    .auth-container {
+      width: 380px;
+      max-width: 100%;
+      margin: 60px auto;
+      padding: 25px;
+      background: #fff8f0;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+      box-sizing: border-box;
+    }
+    .auth-container.register-theme { border: 2px solid #27ae60; }
+    .auth-container.login-theme { border: 2px solid #d35400; width: 350px; }
+    .auth-container h1 { text-align: center; margin-bottom: 5px; font-family: serif; }
+    .auth-container.register-theme h1 { color: #27ae60; }
+    .auth-container.login-theme h1 { color: #d35400; }
+    .auth-container h2 { text-align: center; color: #333; margin-bottom: 20px; font-size: 18px; }
+    .auth-container button {
+      width: 100%;
+      padding: 12px;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .auth-container.register-theme button { background: #27ae60; }
+    .auth-container.register-theme button:hover { background: #2ecc71; }
+    .auth-container.login-theme button { background: #d35400; }
+    .auth-container.login-theme button:hover { background: #e67e22; }
+    .auth-link { text-align: center; margin-top: 15px; }
+    .auth-link a { text-decoration: none; font-weight: 600; }
+    .auth-container.register-theme .auth-link a { color: #27ae60; }
+    .auth-container.login-theme .auth-link a { color: #d35400; }
+
+    /* Delayed Banner Feedback System */
+    .feedback-banner {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 50px auto;
+      max-width: 400px;
+    }
+
+    /* ==========================================================================
+       3. MAIN HUB COMPONENT LAYOUTS
+       ========================================================================== */
+    .topbar {
+      background: #f7efe0;
+      border-bottom: 1px solid #e9e1d6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 16px;
+      font-size: 14px;
+    }
+    .topbar a { text-decoration: none; font-weight: 600; color: #b85c38; }
+    .brand-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #b85c38; object-fit: cover; }
+    
+    .nav { position: sticky; top: 0; z-index: 20; background: #fff; border-bottom: 1px solid #e9e1d6; }
+    .nav-inner { max-width: 1080px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; }
+    .logo { font-weight: 800; font-size: 18px; color: #b85c38; }
+    .menu { display: flex; flex-wrap: wrap; gap: 16px; }
+    .menu a { text-decoration: none; color: #1b1b1b; padding: 8px 10px; border-radius: 8px; }
+    .menu a:hover { background: #fff6ea; }
+
+    .hero { max-width: 1080px; margin: 24px auto; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; padding: 0 16px; }
+    .product-image { width: 100%; aspect-ratio: 16/9; border-radius: 12px; object-fit: cover; border: 1px solid #e9e1d6; background: #fff; }
+    .contact-inline { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+    .actions { margin-top: 15px; display: flex; gap: 10px; }
+
+    .section { max-width: 1080px; margin: 24px auto; padding: 0 16px; }
+    .section h2 { margin: 0 0 12px; color: #b85c38; }
+    
+    .products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .product { background: #fff; border: 1px solid #e9e1d6; border-radius: 14px; padding: 14px; text-align: center; }
+    .product .thumb { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #e9e1d6; background: #fff; margin: 0 auto 10px; }
+    .price { font-weight: bold; color: #b85c38; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .footer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .footer-grid h3 { color: #b85c38; margin-top: 0; margin-bottom: 10px; }
+
+    /* ==========================================================================
+       4. BILLING & DIGITAL PAYMENT SYSTEM
+       ========================================================================== */
+    .billing-box { width: 600px; max-width: 100%; margin: 40px auto; padding: 25px; background: #fff8f0; border: 2px solid #d35400; border-radius: 10px; box-shadow: 0 0 12px rgba(0,0,0,0.15); box-sizing: border-box; }
+    .billing-box h1 { text-align: center; color: #d35400; margin-bottom: 20px; }
+    .billing-box h3 { border-bottom: 1px solid #ddd; padding-bottom: 5px; color: #333; }
+    .billing-box table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .billing-box td, .billing-box th { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    .billing-box td:last-child, .billing-box th:last-child { text-align: right; }
+
+    /* Professional Digital QR Area Container */
+    .qr-payment-area {
+      background: #fff;
+      border: 2px dashed #b85c38;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      margin: 15px 0;
+    }
+    .qr-image { width: 220px; height: auto; margin: 10px auto; display: block; border: 1px solid #ddd; padding: 5px; background: #fff; }
+
+    /* Modal Popups */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 100; }
+    .modal-content { background: #fff; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .modal-content h2 { color: #27ae60; margin-top: 0; margin-bottom: 15px; }
+    .close-btn { background: #d35400; color: #fff; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 15px; width: 100%; font-weight: bold; }
+
+    @media (max-width: 768px) {
+      .hero, .products, .form-grid, .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       SECTION A: REGISTER VIEW
+       ========================================================================== -->
+  <div id="view-register" class="auth-container register-theme">
+    <div class="logo" style="justify-content: center;"><img src="logo.png" style="width:80px; display:block; margin:0 auto;" alt="Logo"></div>
+    <h1>Thekuwa Ghar</h1>
+    <h2>Create Your Account</h2>
+    <form id="regForm" onsubmit="handleRegister(event)">
+      <input type="text" id="regName" placeholder="Full Name" required>
+      <input type="email" id="regEmail" placeholder="Email Address" required>
+      <input type="tel" id="regPhone" placeholder="Phone Number" required>
+      <input type="password" id="regPassword" placeholder="Password" required>
+      <button type="submit">Register</button>
+    </form>
+    <div class="auth-link"><a href="#" onclick="showView('login')">Already have an account? Login</a></div>
+  </div>
+
+  <!-- ==========================================================================
+       SECTION B: LOGIN VIEW
+       ========================================================================== -->
+  <div id="view-login" class="auth-container login-theme hidden">
+    <div class="logo" style="justify-content: center;"><img src="logo.png" style="width:80px; display:block; margin:0 auto;" alt="Logo"></div>
+    <h1>Thekuwa Ghar</h1>
+    <h2>Login to Continue</h2>
+    <form id="logForm" onsubmit="handleLogin(event)">
+      <input type="email" id="logEmail" placeholder="Email Address" required>
+      <input type="password" id="logPassword" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <div class="auth-link"><a href="#" onclick="showView('register')">New user? Register here</a></div>
+  </div>
+
+  <!-- ==========================================================================
+       SECTION C: SYSTEM FEEDBACK DELAY SCREEN
+       ========================================================================== -->
+  <div id="view-feedback" class="feedback-banner hidden">
+    <div class="card">
+      <h2 id="feedback-title" style="color: #27ae60;">Success!</h2>
+      <p id="feedback-desc">Processing request...</p>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       SECTION D: MAIN APP HUB SCREEN (STOREFRONT)
+       ========================================================================== -->
+  <div id="view-mainapp" class="hidden">
+    <div class="topbar">
+      <img class="brand-avatar" src="logo.png" alt="Brand avatar" />
+      <div><a href="#" onclick="showView('login')">Logout</a></div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="logo">Thekua Ghar — Rasoi Se Mandir Tak</div>
+        <div class="menu">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#dishes">Dishes</a>
+          <a href="#form">Order Form</a>
+          <a href="#address">Location</a>
+        </div>
+      </div>
+    </nav>
+
+    <section id="home" class="hero">
+      <div class="card">
+        <img class="product-image" src="mainpic.png" alt="THEKUWA GHAR package" />
+        <h1>THEKUWA GHAR</h1>
+        <p class="muted">ठेkuwa घर — Traditional, handmade, and fresh for your puja offerings.</p>
+        <div class="contact-inline">
+          <div><strong>Address:</strong> Kathmandu, Nepal</div>
+          <div><strong>Phone:</strong> +977-9829202123</div>
+          <div class="actions">
+            <a class="btn primary" href="#form">Quick Order</a>
+            <a class="btn secondary" href="#dishes">See dishes</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Today’s highlights</h2>
+        <p class="muted">Fresh batches available. Limited same-day delivery across KTM, Lalitpur, and Bhaktapur.</p>
+        <ul class="list" style="list-style: none; padding-left: 0;">
+           <li><strong>OUR SERVICE:</strong> Pure & hygienic, Eco-friendly packaging, On-time delivery</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="dishes" class="section">
+      <h2>Our dishes</h2>
+      <div class="products">
+        <div class="product">
+          <img class="thumb" src="plane.png" alt="Plain Sugar Thekuwa" />
+          <h3>Plain Sugar Thekuwa</h3>
+          <p class="price">Rs. 500</p>
+        </div>
+        <div class="product">
+          <img class="thumb" src="coconut.png" alt="Coconut Thekuwa" />
+          <h3>Coconut Thekuwa</h3>
+          <p class="price">Rs. 620</p>
+        </div>
+        <div class="product">
+          <img class="thumb" src="Gud.png" alt="Gud Thekuwa" />
+          <h3>(Gud) Sugary Thekuwa</h3>
+          <p class="price">Rs. 800</p>
+        </div>
+        <div class="product">
+          <img class="thumb" src="sugarfree.png" alt="Sugar-free Thekuwa" />
+          <h3>Sugar-free Thekuwa</h3>
+          <p class="price">Rs. 600</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="form" class="section">
+      <h2>Order form</h2>
+      <form class="card" onsubmit="handleOrderSubmission(event)">
+        <div class="form-grid">
+          <div>
+            <label for="orderName">Name</label>
+            <input id="orderName" type="text" placeholder="Your name" required />
+          </div>
+          <div>
+            <label for="orderEmail">Email</label>
+            <input id="orderEmail" type="email" placeholder="your@email.com" required />
+          </div>
+          <div>
+            <label for="orderPhone">Number</label>
+            <input id="orderPhone" type="tel" placeholder="+977-98xxxxxxx" required />
+          </div>
+          <div>
+            <label for="orderDish">Required dishes</label>
+            <select id="orderDish" required>
+              <option value="">Select a dish</option>
+              <option value="Plain Sugar Thekuwa">Plain Sugar Thekuwa</option>
+              <option value="Coconut Thekuwa">Coconut Thekuwa</option>
+              <option value="(Gud) Sugary Thekuwa">(Gud) Sugary Thekuwa</option>
+              <option value="Sugar-free Thekuwa">Sugar-free Thekuwa</option>
+            </select>
+          </div>
+          <div>
+            <label for="orderPackets">Number of packets</label>
+            <input id="orderPackets" type="number" min="1" placeholder="e.g., 5" required />
+          </div>
+          <div>
+            <label for="orderAddress">Delivery address</label>
+            <input id="orderAddress" type="text" placeholder="Street, area, city" required />
+          </div>
+          <div style="grid-column: span 2;">
+            <label for="orderPaymentMethod">Payment Method</label>
+            <select id="orderPaymentMethod" required>
+              <option value="Cash on Delivery">Cash on Delivery (COD)</option>
+              <option value="eSewa">eSewa Digital Wallet</option>
+              <option value="IME Pay">IME Pay</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="place-order-btn">Place Order</button>
+      </form>
+    </section>
+
+    <section id="address" class="section">
+      <h2>Location, contact, and service</h2>
+      <div class="footer-grid">
+        <div class="card">
+          <h3>Location</h3>
+          <ul class="list">
+            <li><strong>Main Office:</strong> Kathmandu</li>
+            <li><strong>Branch:</strong> Lalitpur, Bhaktapur, Garuda</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Contact</h3>
+          <ul class="list">
+            <li><strong>Primary:</strong> +977-9829202123</li>
+            <li><strong>Support 1:</strong> +977-9766380000</li>
+            <li><strong>Support 2:</strong> +977-9854000000</li>
+            <li><strong>Email:</strong> takuwa123@gmail.com</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Our service</h3>
+          <ul class="list">
+            <li><strong>Delivery:</strong> Same-day in KTM Valley</li>
+            <li><strong>Payments:</strong> Cash, IME Pay, eSewa</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================================================
+       SECTION E: TRANSACTION RECEIPT SCREEN
+       ========================================================================== -->
+  <div id="view-transaction" class="hidden">
+    <div class="billing-box">
+      <h1>Billing Statement</h1>
+      <h3>Customer Information</h3>
+      <table>
+        <tr><td>Name</td><td id="lblBillName"></td></tr>
+        <tr><td>Email</td><td id="lblBillEmail"></td></tr>
+        <tr><td>Phone</td><td id="lblBillPhone"></td></tr>
+        <tr><td>Delivery Address</td><td id="lblBillAddress"></td></tr>
+        <tr><td>Payment Method</td><td id="lblBillMethod" style="font-weight: bold; color: #b85c38;"></td></tr>
+      </table>
+
+      <h3>Order Details</h3>
+      <table>
+        <tr><th>Dish</th><th>Qty</th><th>Subtotal</th></tr>
+        <tr><td id="lblBillDish"></td><td id="lblBillQty"></td><td id="lblBillSub"></td></tr>
+      </table>
+
+      <h3>Billing</h3>
+      <table>
+        <tr><td>Tax (13%)</td><td id="lblBillTax"></td></tr>
+        <tr><td><strong>Total Payable</strong></td><td><strong id="lblBillTotal"></strong></td></tr>
+      </table>
+
+      <!-- Dynamic Professional Digital QR Payment Container -->
+      <div id="qrPayContainer" class="qr-payment-area hidden">
+        <h4 id="qrTitle" style="margin:0 0 5px; color:#b85c38;">Scan to Pay with eSewa</h4>
+        <p class="muted" style="font-size:12px; margin:0 0 10px 0;">Please transfer the exact Total Payable amount shown above, then click confirm below.</p>
+        <img class="qr-image" src="esewa.jpeg" id="qrTargetImage" alt="Payment QR Code">
+      </div>
+
+      <button onclick="triggerReceiptModal()" class="place-order-btn" style="margin-top:5px;">Confirm Payment & Complete Order</button>
+    </div>
+
+    <!-- Success Popup Alert Modal -->
+    <div class="modal" id="successModal">
+      <div class="modal-content">
+        <h2>Transaction Successful!</h2>
+        <div style="text-align: left; line-height: 1.8; margin-bottom: 20px;">
+          <strong>Customer:</strong> <span id="mdlName"></span><br>
+          <strong>Order:</strong> <span id="mdlDetails"></span><br>
+          <strong>Payment:</strong> <span id="mdlMethod"></span><br>
+          <strong>Total Paid:</strong> <span id="mdlTotal"></span>
+        </div>
+        <p style="color: #666; font-size: 14px;">Thank you for choosing Thekuwa Ghar. We will contact you shortly.</p>
+        <button class="close-btn" onclick="exitPipelineToHome()">Return to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       5. INTERNALS & NAVIGATION PIPELINE SCRIPT
+       ========================================================================== -->
+  <script>
+    const menuCatalogPrices = {
+      "Plain Sugar Thekuwa": 500,
+      "Coconut Thekuwa": 620,
+      "(Gud) Sugary Thekuwa": 800,
+      "Sugar-free Thekuwa": 600
+    };
+
+    let globalActiveReceiptPayload = {};
+
+    function showView(viewId) {
+      document.getElementById('view-register').classList.add('hidden');
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-feedback').classList.add('hidden');
+      document.getElementById('view-mainapp').classList.add('hidden');
+      document.getElementById('view-transaction').classList.add('hidden');
+      document.getElementById('view-' + viewId).classList.remove('hidden');
+    }
+
+    function triggerFeedbackRedirect(title, description, targetView, delayMs = 2000) {
+      document.getElementById('feedback-title').innerText = title;
+      document.getElementById('feedback-desc').innerText = description;
+      showView('feedback');
+      setTimeout(() => { showView(targetView); }, delayMs);
+    }
+
+    function handleRegister(event) {
+      event.preventDefault();
+      triggerFeedbackRedirect("Registration Successful!", "Account saved. Redirecting to login page...", "login");
+      document.getElementById('regForm').reset();
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      triggerFeedbackRedirect("Login Successful!", "Welcome back! Redirecting to storefront...", "mainapp");
+      document.getElementById('logForm').reset();
+    }
+
+    function handleOrderSubmission(event) {
+      event.preventDefault();
+      
+      const dish = document.getElementById('orderDish').value;
+      const qty = parseInt(document.getElementById('orderPackets').value) || 0;
+      const method = document.getElementById('orderPaymentMethod').value;
+      const unitPrice = menuCatalogPrices[dish] || 0;
+      
+      const amount = unitPrice * qty;
+      const tax = amount * 0.13;
+      const total = amount + tax;
+
+      globalActiveReceiptPayload = {
+        name: document.getElementById('orderName').value,
+        email: document.getElementById('orderEmail').value,
+        phone: document.getElementById('orderPhone').value,
+        address: document.getElementById('orderAddress').value,
+        dish: dish,
+        qty: qty,
+        method: method,
+        subtotal: amount,
+        tax: tax,
+        total: total
+      };
+
+      // Push texts to UI labels
+      document.getElementById('lblBillName').innerText = globalActiveReceiptPayload.name;
+      document.getElementById('lblBillEmail').innerText = globalActiveReceiptPayload.email;
+      document.getElementById('lblBillPhone').innerText = globalActiveReceiptPayload.phone;
+      document.getElementById('lblBillAddress').innerText = globalActiveReceiptPayload.address;
+      document.getElementById('lblBillMethod').innerText = globalActiveReceiptPayload.method;
+      document.getElementById('lblBillDish').innerText = globalActiveReceiptPayload.dish;
+      document.getElementById('lblBillQty').innerText = globalActiveReceiptPayload.qty;
+      document.getElementById('lblBillSub').innerText = "Rs. " + globalActiveReceiptPayload.subtotal.toFixed(2);
+      document.getElementById('lblBillTax').innerText = "Rs. " + globalActiveReceiptPayload.tax.toFixed(2);
+      document.getElementById('lblBillTotal').innerText = "Rs. " + globalActiveReceiptPayload.total.toFixed(2);
+
+      // Professional Digital Payment UI Conditions
+      const qrContainer = document.getElementById('qrPayContainer');
+      const qrTitle = document.getElementById('qrTitle');
+      const qrImg = document.getElementById('qrTargetImage');
+
+      if (method === "Cash on Delivery") {
+        qrContainer.classList.add('hidden');
+      } else {
+        qrContainer.classList.remove('hidden');
+        if (method === "eSewa") {
+          qrTitle.innerText = "Scan to Pay with eSewa Mobile Wallet";
+          qrImg.src = "esewa.jpeg"; // Pointing verbatim to your esewa.jpeg file
+        } else if (method === "IME Pay") {
+          qrTitle.innerText = "Scan to Pay with IME Pay Wallet";
+          qrImg.src = "imepay_qr.png"; 
+        }
+      }
+
+      triggerFeedbackRedirect("Order Placed Successfully!", "Generating your invoice statement details...", "transaction");
+    }
+
+    function triggerReceiptModal() {
+      document.getElementById('mdlName').innerText = globalActiveReceiptPayload.name;
+      document.getElementById('mdlDetails').innerText = globalActiveReceiptPayload.qty + "x " + globalActiveReceiptPayload.dish;
+      document.getElementById('mdlMethod').innerText = globalActiveReceiptPayload.method;
+      document.getElementById('mdlTotal').innerText = "Rs. " + globalActiveReceiptPayload.total.toFixed(2);
+      
+      document.getElementById('successModal').style.display = 'flex';
+    }
+
+    function exitPipelineToHome() {
+      document.getElementById('successModal').style.display = 'none';
+      showView('mainapp');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      alert("Welcome to Thekuwa Ghar — where tradition meets taste.");
+    });
+  </script>
+</body>
+</html>
